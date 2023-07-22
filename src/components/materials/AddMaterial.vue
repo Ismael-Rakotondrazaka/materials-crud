@@ -176,15 +176,13 @@ watch(
 
 const updateMaterial = () => {
   if (!haveErrors.value) {
-    materialStore
-      .createMaterial({
-        name: nameModel.value,
-        status: statusModel.value,
-        quantity: quantityModel.value
-      })
-      .then(() => {
-        resetModels();
-      });
+    materialStore.createMaterial({
+      name: nameModel.value,
+      status: statusModel.value,
+      quantity: quantityModel.value
+    });
+
+    resetModels();
   }
 };
 </script>
