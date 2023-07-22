@@ -31,12 +31,12 @@
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label :for="'edit_name_material_' + id" class="form-label">Désignation</label>
+                <label for="edit_name_material" class="form-label">Désignation</label>
 
                 <input
                   type="text"
                   class="form-control"
-                  :id="'edit_name_material_' + id"
+                  id="edit_name_material"
                   :class="[nameInputClass]"
                   v-model="nameModel"
                 />
@@ -45,13 +45,13 @@
               </div>
 
               <div class="mb-3">
-                <label :for="'edit_quantity_material_' + id" class="form-label">Quantité</label>
+                <label for="edit_quantity_material" class="form-label">Quantité</label>
 
                 <input
                   type="number"
                   class="form-control"
                   min="0"
-                  :id="'edit_quantity_material_' + id"
+                  id="edit_quantity_material"
                   :class="[quantityInputClass]"
                   v-model="quantityModel"
                 />
@@ -60,12 +60,12 @@
               </div>
 
               <div class="mb-3">
-                <label :for="'edit_status_material_' + id" class="form-label">État</label>
+                <label for="add_status_material" class="form-label">État</label>
 
                 <select
                   v-model="statusModel"
                   class="form-select is-valid"
-                  :id="'edit_status_material_' + id"
+                  id="add_status_material"
                   required
                 >
                   <option value="bon">Bon</option>
@@ -88,12 +88,12 @@
 
             <button
               :disabled="haveErrors"
-              @click="updateMaterial"
+              @click="addMaterial"
               type="button"
               class="btn btn-primary"
               data-bs-dismiss="modal"
             >
-              Enregistrer les modifications
+              Ajouter le matériel
             </button>
           </div>
         </div>
@@ -174,7 +174,7 @@ watch(
   }
 );
 
-const updateMaterial = () => {
+const addMaterial = () => {
   if (!haveErrors.value) {
     materialStore.createMaterial({
       name: nameModel.value,
