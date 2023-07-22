@@ -10,7 +10,7 @@
               :class="{
                 active: $route.name == 'home'
               }"
-              >Home</RouterLink
+              >Accueil</RouterLink
             >
           </li>
           <li class="nav-item">
@@ -20,7 +20,7 @@
               :class="{
                 active: $route.name == 'about'
               }"
-              >About</RouterLink
+              >A propos</RouterLink
             >
           </li>
         </ul>

@@ -28,7 +28,7 @@
 <script setup>
 import MaterialItem from "./MaterialItem.vue";
 
-const props = defineProps({
+defineProps({
   materials: {
     type: Array,
     required: false,

@@ -2,7 +2,7 @@
   <div class="d-inline-block text-start">
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" :data-bs-target="bsTarget">
-      Modifier
+      Ajouter un nouveau matériel
     </button>
 
     <!-- Modal -->
@@ -17,9 +17,7 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5">
-              Modifier le matériel <span class="text-primary fw-bold">{{ name }}</span>
-            </h1>
+            <h1 class="modal-title fs-5">Ajouter un nouveau matériel</h1>
 
             <button
               @click="resetModels"
@@ -33,12 +31,12 @@
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label :for="'edit_name_material_' + id" class="form-label">Désignation</label>
+                <label for="edit_name_material" class="form-label">Désignation</label>
 
                 <input
                   type="text"
                   class="form-control"
-                  :id="'edit_name_material_' + id"
+                  id="edit_name_material"
                   :class="[nameInputClass]"
                   v-model="nameModel"
                 />
@@ -47,13 +45,13 @@
               </div>
 
               <div class="mb-3">
-                <label :for="'edit_quantity_material_' + id" class="form-label">Quantité</label>
+                <label for="edit_quantity_material" class="form-label">Quantité</label>
 
                 <input
                   type="number"
                   class="form-control"
                   min="0"
-                  :id="'edit_quantity_material_' + id"
+                  id="edit_quantity_material"
                   :class="[quantityInputClass]"
                   v-model="quantityModel"
                 />
@@ -62,12 +60,12 @@
               </div>
 
               <div class="mb-3">
-                <label :for="'edit_status_material_' + id" class="form-label">État</label>
+                <label for="add_status_material" class="form-label">État</label>
 
                 <select
                   v-model="statusModel"
                   class="form-select is-valid"
-                  :id="'edit_status_material_' + id"
+                  id="add_status_material"
                   required
                 >
                   <option value="bon">Bon</option>
@@ -90,12 +88,12 @@
 
             <button
               :disabled="haveErrors"
-              @click="updateMaterial"
+              @click="addMaterial"
               type="button"
               class="btn btn-primary"
               data-bs-dismiss="modal"
             >
-              Enregistrer les modifications
+              Ajouter le matériel
             </button>
           </div>
         </div>
@@ -108,34 +106,15 @@
 import { useMaterialStore } from "../../stores/material";
 import { computed, ref, watch } from "vue";
 
-const props = defineProps({
-  id: {
-    type: Number,
-    required: true
-  },
-  name: {
-    type: String,
-    required: true
-  },
-  quantity: {
-    type: Number,
-    required: true
-  },
-  status: {
-    type: String,
-    required: true
-  }
-});
-
 const materialStore = useMaterialStore();
 
-const modalId = computed(() => `edit_material_${props.id}_modal`);
+const modalId = computed(() => `add_material_modal`);
 
 const bsTarget = computed(() => `#${modalId.value}`);
 
-const nameModel = ref(props.name);
-const statusModel = ref(props.status);
-const quantityModel = ref(props.quantity);
+const nameModel = ref("");
+const statusModel = ref("bon");
+const quantityModel = ref(0);
 
 const errors = ref({
   name: null,
@@ -156,36 +135,48 @@ const haveErrors = computed(() => {
 });
 
 const resetModels = () => {
-  nameModel.value = props.name;
-  statusModel.value = props.status;
-  quantityModel.value = props.quantity;
+  nameModel.value = "";
+  statusModel.value = "bon";
+  quantityModel.value = 0;
 };
 
 const nameInputClass = computed(() => (errors.value.name ? "is-invalid" : "is-valid"));
 
 const quantityInputClass = computed(() => (errors.value.quantity ? "is-invalid" : "is-valid"));
 
-watch(nameModel, (newValue) => {
-  const trimmed = newValue.trim();
+watch(
+  nameModel,
+  (newValue) => {
+    const trimmed = newValue.trim();
 
-  if (trimmed.length > 0) {
-    errors.value.name = null;
-  } else {
-    errors.value.name = "La désignation du matériel est requis.";
+    if (trimmed.length > 0) {
+      errors.value.name = null;
+    } else {
+      errors.value.name = "La désignation du matériel est requis.";
+    }
+  },
+  {
+    immediate: true
   }
-});
+);
 
-watch(quantityModel, (newValue) => {
-  if (newValue >= 0) {
-    errors.value.quantity = null;
-  } else {
-    errors.value.quantity = "La quantité du matériel doit être positive.";
+watch(
+  quantityModel,
+  (newValue) => {
+    if (newValue >= 0) {
+      errors.value.quantity = null;
+    } else {
+      errors.value.quantity = "La quantité du matériel doit être positive.";
+    }
+  },
+  {
+    immediate: true
   }
-});
+);
 
-const updateMaterial = () => {
+const addMaterial = () => {
   if (!haveErrors.value) {
-    materialStore.updateMaterial(props.id, {
+    materialStore.createMaterial({
       name: nameModel.value,
       status: statusModel.value,
       quantity: quantityModel.value
@@ -194,27 +185,6 @@ const updateMaterial = () => {
     resetModels();
   }
 };
-
-watch(
-  () => props.name,
-  (newValue) => {
-    nameModel.value = newValue;
-  }
-);
-
-watch(
-  () => props.status,
-  (newValue) => {
-    statusModel.value = newValue;
-  }
-);
-
-watch(
-  () => props.quantity,
-  (newValue) => {
-    quantityModel.value = newValue;
-  }
-);
 </script>
 
 <style scoped></style>
