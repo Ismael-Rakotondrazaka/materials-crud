@@ -185,15 +185,13 @@ watch(quantityModel, (newValue) => {
 
 const updateMaterial = () => {
   if (!haveErrors.value) {
-    materialStore
-      .updateMaterial(props.id, {
-        name: nameModel.value,
-        status: statusModel.value,
-        quantity: quantityModel.value
-      })
-      .then(() => {
-        resetModels();
-      });
+    materialStore.updateMaterial(props.id, {
+      name: nameModel.value,
+      status: statusModel.value,
+      quantity: quantityModel.value
+    });
+
+    resetModels();
   }
 };
 
