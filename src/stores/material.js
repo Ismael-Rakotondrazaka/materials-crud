@@ -13,6 +13,8 @@ export const useMaterialStore = defineStore(
 
     const materials = ref([]);
 
+    const lastId = ref(0);
+
     // total numbers of materials
     const totalCount = computed(() =>
       materials.value.reduce((prev, curr) => curr.quantity + prev, 0)
@@ -41,45 +43,42 @@ export const useMaterialStore = defineStore(
     );
 
     // this one is used to get materials from the db, not from the store, which is directly accessible from anywhere
-    const getMaterials = () => axios("/materials").then((response) => response.data);
-
-    const getMaterial = (id) => axios(`/materials/${id}`).then((response) => response.data);
+    const getMaterial = (id) => materials.value.find((value) => value.id === id);
 
     const findIndex = (id) => materials.value.findIndex((value) => value.id === id);
 
     const createMaterial = (data) => {
-      axios.post("/materials", data).then((response) => materials.value.push(response.data));
+      const material = {};
+
+      for (const key in data) {
+        if (Object.hasOwnProperty.call(data, key)) {
+          material[key] = data[key];
+        }
+      }
+
+      material.id = ++lastId.value;
+
+      materials.value.push(material);
     };
 
-    const updateMaterial = (id, updates) =>
-      getMaterial(id)
-        .then((material) => {
-          for (const key in updates) {
-            if (Object.hasOwnProperty.call(updates, key)) {
-              material[key] = updates[key];
-            }
+    const updateMaterial = (id, updates) => {
+      const material = getMaterial(id);
+
+      if (material) {
+        for (const key in updates) {
+          if (Object.hasOwnProperty.call(updates, key)) {
+            material[key] = updates[key];
           }
-
-          return material;
-        })
-        .then((material) =>
-          axios.put(`/materials/${id}`, material).then(() => {
-            const index = findIndex(id);
-
-            if (index !== -1) {
-              materials.value[index] = material;
-            }
-          })
-        );
+        }
+      }
+    };
 
     const deleteMaterial = (id) => {
-      axios.delete(`/materials/${id}`).then(() => {
-        const index = findIndex(id);
+      const index = findIndex(id);
 
-        if (index !== -1) {
-          materials.value.splice(index, 1);
-        }
-      });
+      if (index !== -1) {
+        materials.value.splice(index, 1);
+      }
     };
 
     return {
@@ -89,7 +88,7 @@ export const useMaterialStore = defineStore(
       goodCount,
       badCount,
       damagedCount,
-      getMaterials,
+      lastId,
       getMaterial,
       createMaterial,
       updateMaterial,
@@ -196,6 +195,8 @@ export const useMaterialStore = defineStore(
               quantity: 22
             }
           ];
+
+          store.lastId = 15;
 
           // ! mark as used before persist, otherwise it will run into an infinite loop
           localStorage.setItem("hasBeenUsed", "true");
