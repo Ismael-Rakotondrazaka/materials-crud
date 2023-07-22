@@ -11,7 +11,7 @@ const materialStore = useMaterialStore();
   <main class="container py-5">
     <div class="mb-5">
       <h1 class="fw-bold mb-3">Liste des matériels :</h1>
-      <AddMaterial class="my-5"/>
+      <AddMaterial class="my-5" />
       <MaterialList :materials="materialStore.materials" />
     </div>
 

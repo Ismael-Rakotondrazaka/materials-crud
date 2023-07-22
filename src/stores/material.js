@@ -1,4 +1,3 @@
-import { axios } from "../utils/axios";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
